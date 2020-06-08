@@ -59,7 +59,7 @@ void send_scans_paid(int cl_sd, char *scans_paid_str);
 char* cl_get_scans_paid(int cl_sd);
 
 void cl_main(MYSQL *db_con, int ls_sd);
-int cl_get_mode(MYSQL *db_con, int ls_sd);
+int cl_get_mode(int ls_sd);
 
 void cl_print_mode(MYSQL *db_con, int ls_sd);
 void cl_scan_mode(MYSQL *db_con, int ls_sd);
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
 	if(argc < 2)
 	{
-		printf("Usage: ./server <port>\n");
+		printf("Usage: ./ps_serv <port>\n");
 		exit(0);
 	}
 
@@ -208,7 +208,7 @@ void cl_print_mode(MYSQL *db_con, int ls_sd)
 	}
 	else
 	{
-		exit();
+		exit(ERROR_PIN);
 	}
 }
 
@@ -239,7 +239,7 @@ char* db_get_user_id(MYSQL *db_con, char *pin_str)
 	int req_res = mysql_query(db_con, req_sql);
 	if(req_res != 0)
 	{
-		fprintf("db_get_user_id::error\n");
+		fprintf(stderr, "db_get_user_id::error\n");
 	}
 
 	MYSQL_RES* sql_res = mysql_store_result(db_con);
@@ -269,7 +269,7 @@ struct str_list* db_get_file_names(MYSQL *db_con, char *user_id)
 	int req_res = mysql_query(db_con, req_sql);
 	if(req_res != 0)
 	{
-		fprintf("db_get_file_names::error\n");
+		fprintf(stderr, "db_get_file_names::error\n");
 		exit(1);
 	}
 
@@ -342,7 +342,7 @@ void db_set_scans_paid(MYSQL *db_con, char *user_id, char* new_value)
 	int req_res = mysql_query(db_con, req_sql);
 	if(req_res != 0)
 	{
-		fprintf("db_set_scans_paid::error\n");
+		fprintf(stderr, "db_set_scans_paid::error\n");
 		exit(2);
 	}
 }
@@ -366,7 +366,7 @@ char* db_get_scans_paid(MYSQL *db_con, char *user_id)
 	int req_res = mysql_query(db_con, req_sql);
 	if(req_res != 0)
 	{
-		fprintf("db_get_scans_paid::error\n");
+		fprintf(stderr, "db_get_scans_paid::error\n");
 		exit(1);
 	}
 
@@ -426,7 +426,7 @@ void db_set_new_scan(MYSQL *db_con, char *user_id, char *scan_name)
 	int req_res = mysql_query(db_con, req_sql);
 	if(req_res != 0)
 	{
-		fprintf("db_set_new_scan::error\n");
+		fprintf(stderr, "db_set_new_scan::error\n");
 		exit(2);
 	}
 }
@@ -476,7 +476,7 @@ void cl_scan_mode(MYSQL *db_con, int ls_sd)
 	cl_scan_main_mode(db_con, ls_sd);
 }
 
-int cl_get_mode(MYSQL *db_con, int ls_sd)
+int cl_get_mode(int ls_sd)
 {
 	int cl_sd = accept(ls_sd, NULL, NULL);
 	int mode;
@@ -486,7 +486,7 @@ int cl_get_mode(MYSQL *db_con, int ls_sd)
 
 void cl_main(MYSQL *db_con, int ls_sd)
 {
-	int mode = cl_get_mode(db_con, ls_sd);
+	int mode = cl_get_mode(ls_sd);
 
 	switch(mode)
 	{
